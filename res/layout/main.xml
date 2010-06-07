@@ -33,6 +33,7 @@
           android:layout_width="fill_parent"
           android:layout_height="wrap_content"
           style="@style/EditText"
+          android:inputType="textPersonName|textCapWords"
           />
       <EditText
           android:id="@+id/email"
@@ -40,6 +41,7 @@
           android:layout_width="fill_parent"
           android:layout_height="wrap_content"
           style="@style/EditText"
+          android:inputType="textEmailAddress"
           />
 
       <TextView
@@ -52,6 +54,7 @@
           android:layout_width="fill_parent"
           android:layout_height="wrap_content"
           style="@style/EditText"
+          android:inputType="textPostalAddress|textCapWords"
           />
       <EditText
           android:id="@+id/city"
@@ -59,6 +62,7 @@
           android:layout_width="fill_parent"
           android:layout_height="wrap_content"
           style="@style/EditText"
+          android:inputType="textPostalAddress|textCapWords"
           />
 
       <LinearLayout
@@ -74,6 +78,8 @@
             android:layout_weight="2"
             style="@style/EditText"
             android:layout_marginRight="0dp"
+            android:inputType="text|textCapCharacters|textNoSuggestions"
+            android:maxLength="2"
             />
         <EditText
             android:id="@+id/zip"
@@ -83,6 +89,7 @@
             android:layout_weight="5"
             style="@style/EditText"
             android:layout_marginLeft="0dp"
+            android:inputType="phone"
             />
       </LinearLayout>
 
@@ -96,6 +103,7 @@
           android:layout_width="fill_parent"
           android:layout_height="wrap_content"
           style="@style/EditText"
+          android:inputType="textPersonName|textCapWords"
           />
       <EditText
           android:id="@+id/occupation"
@@ -103,6 +111,7 @@
           android:layout_width="fill_parent"
           android:layout_height="wrap_content"
           style="@style/EditText"
+          android:inputType="textPersonName|textCapWords"
           />
 
       <TextView
@@ -111,13 +120,90 @@
           />
       <EditText
           android:id="@+id/amount"
-          android:hint="$0.00"
+          android:hint="$0"
           android:layout_width="fill_parent"
           android:layout_height="wrap_content"
           android:textSize="40sp"
           style="@style/EditText"
-          android:layout_marginBottom="15sp"
+          android:inputType="phone"
+          android:maxLength="8"
           />
+
+      <TextView
+          android:text="Eligibility"
+          style="@style/ListSeparator"
+          />
+      <TextView
+          android:layout_width="fill_parent"
+          android:layout_height="wrap_content"
+          android:text="By tapping Pay, the contributor confirms that they meet the following criteria:"
+          android:textSize="12sp"
+          android:textColor="?android:textColorSecondary"
+          android:layout_marginLeft="5sp"
+          android:layout_marginRight="10sp"
+          android:layout_marginBottom="5sp"
+          />
+
+      <TableLayout
+          android:layout_width="fill_parent"
+          android:layout_height="wrap_content"
+          android:stretchColumns="2"
+          android:shrinkColumns="1"
+          android:layout_marginBottom="15sp"
+          android:layout_marginRight="10sp"
+          >
+        <TableRow>
+          <TextView
+            android:text="1."
+            style="@style/Eligibility"
+            />
+          <TextView
+            android:text="I am a United States citizen or permanent resident alien."
+            style="@style/Eligibility"
+            />
+        </TableRow>
+        <TableRow>
+          <TextView
+            android:text="2."
+            style="@style/Eligibility"
+            />
+          <TextView
+            android:text="This contribution is not made from the general treasury funds of a corporation, labor organization or national bank."
+            style="@style/Eligibility"
+            />
+        </TableRow>
+        <TableRow>
+          <TextView
+            android:text="3."
+            style="@style/Eligibility"
+            />
+          <TextView
+            android:text="This contribution is not made from the treasury of an entity or person who is a federal contractor."
+            style="@style/Eligibility"
+            />
+        </TableRow>
+        <TableRow>
+          <TextView
+            android:text="4."
+            style="@style/Eligibility"
+            />
+          <TextView
+            android:text="The funds I am donating are not being provided to me by another person or entity for the purpose of making this contribution."
+            style="@style/Eligibility"
+            />
+        </TableRow>
+        <TableRow>
+          <TextView
+            android:text="5."
+            style="@style/Eligibility"
+            />
+          <TextView
+            android:text="I am 18 years or older, or, if I am under 18 years old, I am making this contribution voluntarily with my own funds."
+            style="@style/Eligibility"
+            />
+        </TableRow>
+      </TableLayout>
+
     </LinearLayout>
   </ScrollView>
   <LinearLayout
@@ -138,7 +224,7 @@
         android:layout_weight="2"
         />
     <Button
-        android:text="Continue"
+        android:text="Pay"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="4"
