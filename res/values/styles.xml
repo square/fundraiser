@@ -1,0 +1,22 @@
+<resources>
+
+  <style name="ListSeparator">
+      <item name="android:background">@android:drawable/dark_header</item>
+      <item name="android:layout_width">fill_parent</item>
+      <item name="android:layout_height">29dip</item>
+      <item name="android:textStyle">bold</item>
+      <item name="android:textColor">?android:textColorSecondary</item>
+      <item name="android:textSize">14sp</item>
+      <item name="android:gravity">center_vertical</item>
+      <item name="android:paddingLeft">5sp</item>
+      <item name="android:layout_marginTop">5sp</item>
+      <item name="android:layout_marginBottom">10sp</item>
+  </style>
+
+  <style name="EditText">
+      <item name="android:layout_width">fill_parent</item>
+      <item name="android:layout_height">wrap_content</item>
+      <item name="android:layout_marginLeft">5sp</item>
+      <item name="android:layout_marginRight">10sp</item>
+  </style>
+</resources>
