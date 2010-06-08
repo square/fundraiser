@@ -7,7 +7,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.InputType;
+import android.text.method.KeyListener;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 import com.squareup.android.*;
@@ -46,6 +50,8 @@ public class Main extends Activity {
   private TextView occupation;
   private TextView amount;
 
+  private int dollars;
+
   private TextView[] textViews;
 
   @Override
@@ -75,6 +81,8 @@ public class Main extends Activity {
     employer.setNextFocusUpId(R.id.zip);
     zip.setNextFocusUpId(R.id.state);
 
+    amount.setNextFocusDownId(R.id.pay);
+
     findViewById(R.id.pay).setOnClickListener(new View.OnClickListener() {
       public void onClick(View v) {
         pay();
@@ -86,6 +94,67 @@ public class Main extends Activity {
         showDialog(CLEAR_DIALOG);
       }
     });
+
+    amount.setKeyListener(new KeyListener() {
+      public int getInputType() {
+        return InputType.TYPE_CLASS_PHONE;
+      }
+
+      public boolean onKeyDown(View view, Editable text, int keyCode,
+          KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_DEL) {
+          dollars /= 10;
+          updateAmount();
+          return true;
+        }
+
+        if (keyCode >= KeyEvent.KEYCODE_0 && keyCode <= KeyEvent.KEYCODE_9
+            && dollars <= 999999) {
+          dollars = dollars * 10 + keyCode - KeyEvent.KEYCODE_0;
+          updateAmount();
+          return true;
+        }
+
+        return true;
+      }
+
+      public boolean onKeyUp(View view, Editable text, int keyCode,
+          KeyEvent event) {
+        return true;
+      }
+
+      public boolean onKeyOther(View view, Editable text, KeyEvent event) {
+        return true;
+      }
+
+      public void clearMetaKeyState(View view, Editable content, int states) {
+      }
+    });
+
+    amount.setCursorVisible(false);
+  }
+
+  private static final String AMOUNT_KEY = "amount";
+
+  @Override protected void onSaveInstanceState(Bundle outState) {
+    super.onSaveInstanceState(outState);
+    outState.putInt(AMOUNT_KEY, dollars);
+  }
+
+  @Override protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    super.onRestoreInstanceState(savedInstanceState);
+    dollars = savedInstanceState.getInt(AMOUNT_KEY);
+  }
+
+  /**
+   * Updates the amount field after key events.
+   */
+  private void updateAmount() {
+    if (dollars == 0) {
+      amount.setText("");
+    } else {
+      amount.setText("$" + dollars);
+    }
   }
 
   /** Handles pay button. */
@@ -106,9 +175,12 @@ public class Main extends Activity {
     Square square = new Square(this);
     LineItem donation = new LineItem.Builder()
       .description("Contribution from " + name.getText())
-      .price(new Money(0, Currency.USD))
+      .price(new Money(dollars * 100, Currency.USD))
       .build();
-    square.squareUp(Bill.containing(donation));
+    square.squareUp(new Bill.Builder()
+      .add(donation)
+      .defaultEmail(email.getText().toString())
+      .build());
   }
 
   @Override protected void onActivityResult(int requestCode, int resultCode,
@@ -117,8 +189,9 @@ public class Main extends Activity {
       appendResult(resultCode);
     } catch (IOException e) {
       Log.e(TAG, "Error writing CSV.", e);
-      showDialog(IO_ERROR_DIALOG);
     }
+
+    startOver();
   }
 
   @Override protected Dialog onCreateDialog(int id) {
@@ -128,7 +201,7 @@ public class Main extends Activity {
           .setCancelable(true)
           .setTitle(validate())
           .setMessage("Please try again.")
-          .setNegativeButton("Dismiss", null)
+          .setNegativeButton("OK", null)
           .create();
       case CLEAR_DIALOG:
         return new AlertDialog.Builder(this)
@@ -137,9 +210,7 @@ public class Main extends Activity {
           .setPositiveButton("Dismiss", null)
           .setNegativeButton("Clear", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-              Intent intent = new Intent(Main.this, Main.class);
-              intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-              startActivity(intent);
+              startOver();
             }
           })
           .create();
@@ -153,6 +224,15 @@ public class Main extends Activity {
     }
 
     throw new AssertionError();
+  }
+
+  /**
+   * Starts the activity over.
+   */
+  private void startOver() {
+    Intent intent = new Intent(this, Main.class);
+    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+    startActivity(intent);
   }
 
   private TextView findTextViewById(int id) {
@@ -185,7 +265,7 @@ public class Main extends Activity {
   private Writer openCsv() throws IOException {
     File csv = new File("/sdcard/donations.csv");
     boolean exists = csv.exists();
-    Writer out = new BufferedWriter(new FileWriter(csv), 4096);
+    Writer out = new BufferedWriter(new FileWriter(csv, true), 4096);
     if (!exists)  {
       // Note: This order matches textViews.
       try {

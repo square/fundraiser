@@ -15,12 +15,9 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         >
-      <ImageView
-          android:src="@drawable/banner"
+      <com.squareup.fundraiser.android.Banner
           android:layout_width="fill_parent"
           android:layout_height="wrap_content"
-          android:scaleType="fitXY"
-          android:adjustViewBounds="true"
           />
       <TextView
           android:text="Contact"
