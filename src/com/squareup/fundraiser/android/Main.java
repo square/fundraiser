@@ -191,7 +191,11 @@ public class Main extends Activity {
       Log.e(TAG, "Error writing CSV.", e);
     }
 
-    startOver();
+    if (resultCode == RESULT_OK) {
+      startOver();
+    } else {
+      showDialog(CLEAR_DIALOG);
+    }
   }
 
   @Override protected Dialog onCreateDialog(int id) {
@@ -206,7 +210,7 @@ public class Main extends Activity {
       case CLEAR_DIALOG:
         return new AlertDialog.Builder(this)
           .setCancelable(true)
-          .setTitle("Are you sure?")
+          .setTitle("Clear input?")
           .setPositiveButton("Dismiss", null)
           .setNegativeButton("Clear", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
@@ -247,7 +251,7 @@ public class Main extends Activity {
     for (TextView textView : textViews) {
       if (textView.getText().toString().trim().length() == 0) {
         textView.requestFocus();
-        return "Missing Values";
+        return "Missing Input";
       }
     }
 

@@ -30,7 +30,7 @@
           android:layout_width="fill_parent"
           android:layout_height="wrap_content"
           style="@style/EditText"
-          android:inputType="textPersonName|textCapWords"
+          android:inputType="textPersonName|textCapWords|textNoSuggestions"
           />
       <EditText
           android:id="@+id/email"
@@ -51,7 +51,7 @@
           android:layout_width="fill_parent"
           android:layout_height="wrap_content"
           style="@style/EditText"
-          android:inputType="textPostalAddress|textCapWords"
+          android:inputType="textPostalAddress|textCapWords|textNoSuggestions"
           />
       <EditText
           android:id="@+id/city"
@@ -59,7 +59,7 @@
           android:layout_width="fill_parent"
           android:layout_height="wrap_content"
           style="@style/EditText"
-          android:inputType="textPostalAddress|textCapWords"
+          android:inputType="textPostalAddress|textCapWords|textNoSuggestions"
           />
 
       <LinearLayout
@@ -100,7 +100,7 @@
           android:layout_width="fill_parent"
           android:layout_height="wrap_content"
           style="@style/EditText"
-          android:inputType="textPersonName|textCapWords"
+          android:inputType="textPersonName|textCapWords|textNoSuggestions"
           />
       <EditText
           android:id="@+id/occupation"
@@ -108,7 +108,7 @@
           android:layout_width="fill_parent"
           android:layout_height="wrap_content"
           style="@style/EditText"
-          android:inputType="textPersonName|textCapWords"
+          android:inputType="textPersonName|textCapWords|textNoSuggestions"
           />
 
       <TextView
