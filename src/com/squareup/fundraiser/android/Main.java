@@ -1,9 +1,16 @@
 package com.squareup.fundraiser.android;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
+import com.squareup.android.*;
 
 import java.io.*;
 
@@ -22,6 +29,12 @@ import java.io.*;
  * </ol>
  */
 public class Main extends Activity {
+
+  private static final String TAG = "SquareFundraiser";
+
+  private static final int VALIDATION_DIALOG = 0;
+  private static final int IO_ERROR_DIALOG = 1;
+  private static final int CLEAR_DIALOG = 2;
 
   private TextView name;
   private TextView email;
@@ -61,6 +74,85 @@ public class Main extends Activity {
     state.setNextFocusDownId(R.id.zip);
     employer.setNextFocusUpId(R.id.zip);
     zip.setNextFocusUpId(R.id.state);
+
+    findViewById(R.id.pay).setOnClickListener(new View.OnClickListener() {
+      public void onClick(View v) {
+        pay();
+      }
+    });
+
+    findViewById(R.id.clear).setOnClickListener(new View.OnClickListener() {
+      public void onClick(View v) {
+        showDialog(CLEAR_DIALOG);
+      }
+    });
+  }
+
+  /** Handles pay button. */
+  private void pay() {
+    if (validate() != null) {
+      showDialog(VALIDATION_DIALOG);
+      return;
+    }
+
+    try {
+      appendTextViews();
+    } catch (IOException e) {
+      Log.e(TAG, "Error writing CSV.", e);
+      showDialog(IO_ERROR_DIALOG);
+      return;
+    }
+
+    Square square = new Square(this);
+    LineItem donation = new LineItem.Builder()
+      .description("Contribution from " + name.getText())
+      .price(new Money(0, Currency.USD))
+      .build();
+    square.squareUp(Bill.containing(donation));
+  }
+
+  @Override protected void onActivityResult(int requestCode, int resultCode,
+      Intent data) {
+    try {
+      appendResult(resultCode);
+    } catch (IOException e) {
+      Log.e(TAG, "Error writing CSV.", e);
+      showDialog(IO_ERROR_DIALOG);
+    }
+  }
+
+  @Override protected Dialog onCreateDialog(int id) {
+    switch (id) {
+      case VALIDATION_DIALOG:
+        return new AlertDialog.Builder(this)
+          .setCancelable(true)
+          .setTitle(validate())
+          .setMessage("Please try again.")
+          .setNegativeButton("Dismiss", null)
+          .create();
+      case CLEAR_DIALOG:
+        return new AlertDialog.Builder(this)
+          .setCancelable(true)
+          .setTitle("Are you sure?")
+          .setPositiveButton("Dismiss", null)
+          .setNegativeButton("Clear", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+              Intent intent = new Intent(Main.this, Main.class);
+              intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+              startActivity(intent);
+            }
+          })
+          .create();
+      case IO_ERROR_DIALOG:
+        return new AlertDialog.Builder(this)
+          .setCancelable(true)
+          .setTitle("I/O Error")
+          .setMessage("Please check your SD card and try again.")
+          .setNegativeButton("Dismiss", null)
+          .create();
+    }
+
+    throw new AssertionError();
   }
 
   private TextView findTextViewById(int id) {
@@ -75,13 +167,13 @@ public class Main extends Activity {
     for (TextView textView : textViews) {
       if (textView.getText().toString().trim().length() == 0) {
         textView.requestFocus();
-        return "All fields are required.";
+        return "Missing Values";
       }
     }
 
     if (!Email.isValidEmail(email.getText())) {
       email.requestFocus();
-      return "Please enter a valid email address.";
+      return "Invalid Email Address";
     }
 
     return null;
