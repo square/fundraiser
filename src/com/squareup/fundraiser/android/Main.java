@@ -39,6 +39,7 @@ public class Main extends Activity {
   private static final int VALIDATION_DIALOG = 0;
   private static final int IO_ERROR_DIALOG = 1;
   private static final int CLEAR_DIALOG = 2;
+  private static final int EXIT_DIALOG = 3;
 
   private TextView name;
   private TextView email;
@@ -218,6 +219,18 @@ public class Main extends Activity {
             }
           })
           .create();
+      case EXIT_DIALOG:
+        return new AlertDialog.Builder(this)
+          .setCancelable(true)
+          .setTitle("Confirm Exit")
+          .setMessage("Existing input will be lost.")
+          .setPositiveButton("Dismiss", null)
+          .setNegativeButton("Exit", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+              finish();
+            }
+          })
+          .create();
       case IO_ERROR_DIALOG:
         return new AlertDialog.Builder(this)
           .setCancelable(true)
@@ -228,6 +241,10 @@ public class Main extends Activity {
     }
 
     throw new AssertionError();
+  }
+
+  @Override public void onBackPressed() {
+    showDialog(EXIT_DIALOG);
   }
 
   /**
