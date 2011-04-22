@@ -75,7 +75,7 @@
             android:layout_weight="2"
             style="@style/EditText"
             android:layout_marginRight="0dp"
-            android:inputType="text|textCapCharacters|textNoSuggestions"
+            android:inputType="text|textNoSuggestions"
             android:maxLength="2"
             />
         <EditText
